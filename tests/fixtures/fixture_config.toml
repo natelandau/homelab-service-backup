@@ -1,0 +1,15 @@
+
+# Values for pytest when mocking the environment configuration
+
+action             = "backup"
+backup_storage_dir = ""
+host_name          = "pytest"
+job_data_dir       = ""
+job_name           = "test_job"
+log_to_file        = false
+retention_daily    = 1
+retention_hourly   = 1
+retention_monthly  = 1
+retention_weekly   = 1
+retention_yearly   = 1
+schedule           = false
