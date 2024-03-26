@@ -39,6 +39,11 @@ def backup_dir(tmp_path: Path, mock_config) -> Path:
                 if i == 1 and x == "yearly":
                     os.utime(
                         backup_file,
+                        (backup_file.stat().st_atime, backup_file.stat().st_mtime + i * 100),
+                    )
+                elif i == 1:
+                    os.utime(
+                        backup_file,
                         (backup_file.stat().st_atime, backup_file.stat().st_mtime + i * 10),
                     )
 
