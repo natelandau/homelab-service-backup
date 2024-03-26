@@ -21,4 +21,4 @@ RUN pip install poetry
 RUN poetry install --without dev,test
 
 # Set the entrypoint to run the script
-CMD ["poetry", "run", "backup-services"]
+CMD ["poetry", "run", "hsb"]

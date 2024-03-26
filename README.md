@@ -58,6 +58,123 @@ When not specified, fields greater than the least significant explicitly defined
 
 `HSB_SCHEDULE_DAY_OF_WEEK` accepts abbreviated English month and weekday names (mon - sun).
 
+## Sample Nomad Job
+
+```hcl
+job "test_job" {
+    region      = "global"
+    datacenters = ["homelab"]
+    type        = "service"
+
+    group "test_job" {
+
+        task "create_filesystem" {
+            env {
+                HSB_ACTION             = "restore"
+                HSB_BACKUP_STORAGE_DIR = "/backups"
+                HSB_HOST_NAME          = "${node.unique.name}"
+                HSB_JOB_DATA_DIR       = "/job-data"
+                HSB_JOB_NAME           = "${NOMAD_JOB_NAME}"
+                HSB_LOG_FILE           = "/logs/hsb.log"
+                HSB_LOG_LEVEL          = "SUCCESS"
+                HSB_LOG_TO_FILE        = "true"
+                TZ                     = "America/New_York"
+            }
+
+            driver = "docker"
+            config {
+                image              = "ghcr.io/natelandau/homelab-service-backup:latest"
+                image_pull_timeout = "10m"
+                hostname           = "${NOMAD_TASK_NAME}"
+                volumes            = [
+                    "path/to/service-data-backups:/backups",
+                    "path/to/${NOMAD_JOB_NAME}:/job-data",
+                    "path/to/logs:/logs"
+                ]
+            }
+
+            lifecycle {
+                hook    = "prestart"
+                sidecar = false
+            }
+        } // /task create_filesysm
+
+        task "backup_sidecar" {
+            env {
+                HSB_ACTION             = "backup"
+                HSB_BACKUP_STORAGE_DIR = "/backups"
+                HSB_HOST_NAME          = "${node.unique.name}"
+                HSB_JOB_DATA_DIR       = "/job-data"
+                HSB_JOB_NAME           = "${NOMAD_JOB_NAME}"
+                HSB_LOG_FILE           = "/logs/hsb.log"
+                HSB_LOG_LEVEL          = "SUCCESS"
+                HSB_LOG_TO_FILE        = "true"
+                HSB_SCHEDULE           = "true"
+                HSB_SCHEDULE_HOUR      = "12"
+                HSB_TZ                 = "America/New_York"
+                TZ                     = "America/New_York"
+            }
+
+            driver = "docker"
+            config {
+                image              = "ghcr.io/natelandau/homelab-service-backup:latest"
+                image_pull_timeout = "10m"
+                hostname           = "${NOMAD_TASK_NAME}"
+                volumes            = [
+                    "path/to/service-data-backups:/backups",
+                    "path/to/${NOMAD_JOB_NAME}:/job-data",
+                    "path/to/logs:/logs"
+                ]
+            }
+
+            lifecycle {
+                hook    = "poststart"
+                sidecar = true
+            }
+        } // /task backup_sidecar
+
+        task "test_job" {
+            driver = "docker"
+            config {
+                image              = "some-image"
+            }
+        } // /task backup_sidecar
+
+        task "backup_and_clean" {
+            env {
+                HSB_ACTION             = "backup"
+                HSB_BACKUP_STORAGE_DIR = "/backups"
+                HSB_HOST_NAME          = "${node.unique.name}"
+                HSB_JOB_DATA_DIR       = "/job-data"
+                HSB_JOB_NAME           = "${NOMAD_JOB_NAME}"
+                HSB_LOG_FILE           = "/logs/hsb.log"
+                HSB_LOG_LEVEL          = "SUCCESS"
+                HSB_LOG_TO_FILE        = "true"
+                HSB_TZ                 = "America/New_York"
+                TZ                     = "America/New_York"
+            }
+
+            driver = "docker"
+            config {
+                image              = "ghcr.io/natelandau/homelab-service-backup:latest"
+                image_pull_timeout = "10m"
+                hostname           = "${NOMAD_TASK_NAME}-backup"
+                volumes            = [
+                    "path/to/service-data-backups:/backups",
+                    "path/to/${NOMAD_JOB_NAME}:/job-data",
+                    "path/to/logs:/logs"
+                ]
+            }
+
+            lifecycle {
+                hook    = "poststop"
+                sidecar = false
+            }
+        } // /task backup_and_clean
+
+    }
+```
+
 ## Contributing
 
 ## Setup: Once per project
