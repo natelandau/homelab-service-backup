@@ -14,7 +14,7 @@ def do_restore() -> bool:
     if not most_recent_backup:
         logger.error(f"No backups found to restore for {Config().job_name}")
         return False
-    logger.debug(f"Found backup: {most_recent_backup}")
+    logger.debug(f"Restore from: {most_recent_backup}")
 
     destination = f"{Config().job_data_dir}"
 

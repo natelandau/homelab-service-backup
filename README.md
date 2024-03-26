@@ -144,6 +144,7 @@ job "test_job" {
             env {
                 HSB_ACTION             = "backup"
                 HSB_BACKUP_STORAGE_DIR = "/backups"
+                HSB_DELETE_SOURCE      = "true"
                 HSB_HOST_NAME          = "${node.unique.name}"
                 HSB_JOB_DATA_DIR       = "/job-data"
                 HSB_JOB_NAME           = "${NOMAD_JOB_NAME}"

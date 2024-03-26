@@ -29,14 +29,15 @@ def do_backup() -> Path | None:
     logger.trace(f"{backup_file=!s}")
     logger.trace(f"{source_dir=!s}")
 
+    # NOTE: Compress level 6 is the tar program default
     try:
-        with tarfile.open(backup_file, "w:gz", compresslevel=6) as tar:
+        with tarfile.open(backup_file, "w:gz", compresslevel=9) as tar:
             for file in source_dir.rglob("*"):
                 if (
                     Config().specific_files and file.name not in Config().specific_files  # type: ignore [operator]
                 ):
                     continue
-                logger.debug(f"-> '{file.relative_to(source_dir)}'")
+                logger.trace(f"-> '{file.relative_to(source_dir)}'")
                 tar.add(file, arcname=file.relative_to(source_dir))
     except tarfile.TarError as e:
         logger.error(f"Failed to create backup: {e}")
@@ -49,9 +50,6 @@ def do_backup() -> Path | None:
         logger.info(
             f"Delete {len(deleted_backups)} old {p.plural_noun('backup', len(deleted_backups))}"
         )
-        if Config().log_level == "TRACE":
-            for backup in deleted_backups:
-                logger.trace(f"Deleted {backup.name}")
 
     if Config().delete_source:
         clean_directory(Config().job_data_dir)

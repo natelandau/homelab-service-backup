@@ -43,6 +43,9 @@ def setup_schedule() -> None:
             timezone=Config().tz,
         )
         logger.success("Scheduled restore task")
+        logger.debug(
+            f"minute: {Config().schedule_minute}, hour: {Config().schedule_hour}, day_of_week: {Config().schedule_day_of_week}, week: {Config().schedule_week}, day: {Config().schedule_day}"
+        )
 
     # Start the scheduler
     scheduler.start()

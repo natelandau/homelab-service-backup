@@ -31,7 +31,7 @@ def log_file_formatter(record: dict) -> str:
     """Format log messages for log files."""
     message = record["message"].replace("[code]", "'").replace("[/]", "'")
 
-    return f"{{time:YYYY-MM-DD HH:mm:ss}} |{Config().host_name: <4}| {{level: <7}} |{Config().job_name}: {message}\n"
+    return f"{{time:YYYY-MM-DD HH:mm:ss}} | {Config().host_name: <4}| {{level: <7}} | {Config().job_name}: {message}\n"
 
 
 def instantiate_logger() -> None:  # pragma: no cover
