@@ -11,7 +11,7 @@
     name        = "homelab-service-backup"
     readme      = "README.md"
     repository  = "https://github.com/natelandau/homelab-service-backup"
-    version     = "0.0.0"
+    version     = "0.1.0"
 
     [tool.poetry.scripts] # https://python-poetry.org/docs/pyproject/#scripts
         homelab-service-backup = "homelab_service_backup.cli:app"
@@ -54,7 +54,6 @@
     changelog_merge_prerelease = true
     tag_format                 = "v$version"
     update_changelog_on_bump   = true
-    version_files              = ["src/service_backup/constants.py:VERSION"]
     version_provider           = "poetry"
 
 [tool.coverage.report] # https://coverage.readthedocs.io/en/latest/config.html#report
