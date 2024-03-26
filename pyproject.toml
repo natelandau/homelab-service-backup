@@ -11,7 +11,7 @@
     name        = "homelab-service-backup"
     readme      = "README.md"
     repository  = "https://github.com/natelandau/homelab-service-backup"
-    version     = "0.1.3"
+    version     = "0.2.0"
 
     [tool.poetry.scripts] # https://python-poetry.org/docs/pyproject/#scripts
         homelab-service-backup = "homelab_service_backup.cli:app"

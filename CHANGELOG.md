@@ -1,3 +1,9 @@
+## v0.2.0 (2024-03-26)
+
+### Feat
+
+- **backup**: exclude specific files
+
 ## v0.1.3 (2024-03-26)
 
 ### Fix
