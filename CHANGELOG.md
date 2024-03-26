@@ -1,3 +1,9 @@
+## v0.1.3 (2024-03-26)
+
+### Fix
+
+- increase compression level
+
 ## v0.1.2 (2024-03-26)
 
 ### Fix
