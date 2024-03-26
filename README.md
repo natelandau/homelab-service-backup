@@ -37,6 +37,7 @@ All configuration is managed through environment variables.
 | HSB_SCHEDULE_WEEK        |          |             | ISO week (1-53)                                                                           |
 | HSB_SPECIFIC_FILES       |          |             | A comma separated list of specific files or directories to backup.                        |
 | HSB_TZ                   |          | `Etc/UTC`   | The timezone to use for scheduling                                                        |
+| TZ                       |          | `Etc/UTC`   | The timezone to use for the container                                                     |
 
 ### Scheduler
 
