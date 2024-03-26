@@ -27,23 +27,27 @@ def do_backup() -> Path | None:
     backup_filename = f"{job_name}-{timestamp}-{backup_type}.tgz"
     backup_file = backup_dir / backup_filename
     logger.trace(f"{backup_file=!s}")
-    logger.trace(f"{source_dir=!s}")
 
-    # NOTE: Compress level 6 is the tar program default
+    # NOTE: compresslevel 6 is the tar program default
     try:
         with tarfile.open(backup_file, "w:gz", compresslevel=9) as tar:
+            # Process each file to decide if it should be backed up
             for file in source_dir.rglob("*"):
-                if (
-                    Config().specific_files and file.name not in Config().specific_files  # type: ignore [operator]
-                ):
+                # If including specific files, only backup those
+                if Config().specific_files and file.name not in Config().specific_files:
                     continue
+
+                # If excluding specific files, don't backup those
+                if Config().exclude_files and file.name in Config().exclude_files:
+                    continue
+
                 logger.trace(f"-> '{file.relative_to(source_dir)}'")
                 tar.add(file, arcname=file.relative_to(source_dir))
     except tarfile.TarError as e:
         logger.error(f"Failed to create backup: {e}")
         return None
 
-    logger.success(f"Backup created: {backup_file}")
+    logger.success(f"Backup created: {backup_file.name}")
 
     deleted_backups = clean_old_backups()
     if deleted_backups:

@@ -1,30 +1,10 @@
 """Instantiate Config class and set default values."""
 
 from pathlib import Path
-from typing import Annotated, ClassVar, Literal, Optional
+from typing import ClassVar, Literal, Optional
 
 from confz import BaseConfig, ConfigSources, EnvSource
-from pydantic import BeforeValidator
-
-
-def validate_path(string: str) -> Path:
-    """Validates a string as a valid path.
-
-    Args:
-        string (str): The string to validate.
-
-    Returns:
-        Path: The validated path.
-    """
-    path = Path(string).resolve()
-    if not path.exists():
-        msg = f"Path does not exist: {path}"
-        raise ValueError(msg)
-    return path
-
-
-ValidPath = Annotated[Path, BeforeValidator(validate_path)]
-StringToList = Annotated[list[str], BeforeValidator(lambda x: x.split(","))]
+from pydantic import validator
 
 
 class Config(BaseConfig):  # type: ignore [misc]
@@ -32,10 +12,10 @@ class Config(BaseConfig):  # type: ignore [misc]
 
     # Default values
     action: Literal["backup", "restore"]
-    backup_storage_dir: ValidPath
+    backup_storage_dir: Path
     delete_source: bool = False
     host_name: str = "unknown"
-    job_data_dir: ValidPath
+    job_data_dir: Path
     job_name: str
     log_file: str = "homelab_service_backup.log"
     log_level: str = "INFO"  # TRACE, DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -51,7 +31,8 @@ class Config(BaseConfig):  # type: ignore [misc]
     schedule_minute: Optional[str] = None
     schedule_week: Optional[str] = None
     schedule: bool = False
-    specific_files: Optional[StringToList] = None
+    specific_files: Optional[tuple[str, ...]] = None
+    exclude_files: Optional[tuple[str, ...]] = None
     tz: str = "Etc/UTC"
 
     CONFIG_SOURCES: ClassVar[ConfigSources | None] = EnvSource(
@@ -78,6 +59,7 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_SCHEDULE_WEEK",
             "HSB_SCHEDULE",
             "HSB_SPECIFIC_FILES",
+            "HSB_EXCLUDE_FILES",
             "HSB_TZ",
         ],
         remap={
@@ -103,5 +85,27 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_SCHEDULE": "schedule",
             "HSB_SPECIFIC_FILES": "specific_files",
             "HSB_TZ": "tz",
+            "HSB_EXCLUDE_FILES": "exclude_files",
         },
     )
+
+    @validator("specific_files", "exclude_files", pre=True, each_item=False)
+    def split_string(cls, v: str) -> tuple[str, ...]:
+        """Split a string into a tuple of strings."""
+        return tuple(v.split(","))
+
+    @validator("backup_storage_dir", "job_data_dir", pre=True)
+    def validate_path(cls, string: str) -> Path:
+        """Validates a string as a valid path.
+
+        Args:
+            string (str): The string to validate.
+
+        Returns:
+            Path: The validated path.
+        """
+        path = Path(string).resolve()
+        if not path.exists():
+            msg = f"Path does not exist: {path}"
+            raise ValueError(msg)
+        return path

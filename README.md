@@ -18,6 +18,7 @@ All configuration is managed through environment variables.
 | HSB_ACTION               | ✅       |             | The action to take. `backup` or `restore`                                                 |
 | HSB_BACKUP_STORAGE_DIR   | ✅       |             | The directory to store backups                                                            |
 | HSB_DELETE_SOURCE        |          | `false`     | Delete all contents in the source directory after backup                                  |
+| HSB_EXCLUDE_FILES        |          |             | A comma separated list of files or directories to exclude from the backup.                |
 | HSB_HOST_NAME            |          | `localhost` | The hostname of the machine running the backup. Used in logs                              |
 | HSB_JOB_DATA_DIR         | ✅       |             | The directory to backup                                                                   |
 | HSB_JOB_NAME             | ✅       |             | The name of the Nomad job                                                                 |
