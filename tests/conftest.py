@@ -36,7 +36,7 @@ def backup_dir(tmp_path: Path, mock_config) -> Path:
                     backup_dir / f"{Config().job_name}-202{n}0{n}0{n}T0{n}0{n}00-{x}.{BACKUP_EXT}"
                 )
                 backup_file.touch()
-                if i == 1:
+                if i == 1 and x == "yearly":
                     os.utime(
                         backup_file,
                         (backup_file.stat().st_atime, backup_file.stat().st_mtime + i * 10),
