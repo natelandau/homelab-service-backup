@@ -1,6 +1,7 @@
 # Scratch folder for temporary files
 scratch/
 tmp*
+todo.txt
 
 # Caches
 *_cache/

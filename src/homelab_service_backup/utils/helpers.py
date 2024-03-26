@@ -4,12 +4,15 @@ import shutil
 from pathlib import Path
 
 import arrow
+import inflect
 from arrow import Arrow
 from loguru import logger
 
 from homelab_service_backup.constants import BACKUP_EXT
 
 from .config import Config
+
+p = inflect.engine()
 
 
 def clean_directory(directory: Path) -> None:
@@ -18,13 +21,18 @@ def clean_directory(directory: Path) -> None:
     Args:
         directory (Path): The directory to clean up.
     """
+    n = 0
     for child in directory.iterdir():
+        n += 1
         if child.is_file():
             child.unlink()
         else:
             shutil.rmtree(child)
 
-    logger.info(f"Deleted all files in {directory}")
+    if n == 0:
+        logger.debug(f"{directory} is already empty")
+    else:
+        logger.info(f"Deleted {n} {p.plural_noun('file', n)} in {directory}")
 
 
 def clean_old_backups() -> list[Path]:
