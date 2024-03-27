@@ -1,3 +1,15 @@
+## v0.3.0 (2024-03-27)
+
+### Feat
+
+- **backup**: regex to include or exclude files from backup
+
+### Fix
+
+- **logging**: enque concurrent log requests
+- **cron**: increase jitter to 10 minutes
+- **restore**: delete all files from dest before restore
+
 ## v0.2.0 (2024-03-26)
 
 ### Feat
