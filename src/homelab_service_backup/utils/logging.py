@@ -60,6 +60,7 @@ def instantiate_logger() -> None:  # pragma: no cover
             rotation="50 MB",
             retention=2,
             compression="zip",
+            enqueue=True,
         )
 
     if Config().log_level.upper() not in {"TRACE", "DEBUG"}:
