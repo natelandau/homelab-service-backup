@@ -6,6 +6,7 @@ backup_storage_dir = ""
 host_name          = "pytest"
 job_data_dir       = ""
 job_name           = "test_job"
+log_level          = "ERROR"
 log_to_file        = false
 retention_daily    = 1
 retention_hourly   = 1

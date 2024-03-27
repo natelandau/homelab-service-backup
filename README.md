@@ -19,7 +19,10 @@ All configuration is managed through environment variables.
 | HSB_BACKUP_STORAGE_DIR   | ✅       |             | The directory to store backups                                                            |
 | HSB_DELETE_SOURCE        |          | `false`     | Delete all contents in the source directory after backup                                  |
 | HSB_EXCLUDE_FILES        |          |             | A comma separated list of files or directories to exclude from the backup.                |
+| HSB_EXCLUDE_REGEX        |          |             | A regex pattern to exclude files or directories from the backup.                          |
 | HSB_HOST_NAME            |          | `localhost` | The hostname of the machine running the backup. Used in logs                              |
+| HSB_INCLUDE_FILES        |          |             | A comma separated list of specific files or directories to backup.                        |
+| HSB_INCLUDE_REGEX        |          |             | A regex pattern to include files or directories in the backup.                            |
 | HSB_JOB_DATA_DIR         | ✅       |             | The directory to backup                                                                   |
 | HSB_JOB_NAME             | ✅       |             | The name of the Nomad job                                                                 |
 | HSB_LOG_FILE             |          |             | The file to write logs to                                                                 |
@@ -36,9 +39,17 @@ All configuration is managed through environment variables.
 | HSB_SCHEDULE_HOUR        |          |             | Hour<br>`*/2`, `1,10,16,23`                                                               |
 | HSB_SCHEDULE_MINUTE      |          |             | Minute<br>`*/12`, `1,10,16,23,45`                                                         |
 | HSB_SCHEDULE_WEEK        |          |             | ISO week (1-53)                                                                           |
-| HSB_SPECIFIC_FILES       |          |             | A comma separated list of specific files or directories to backup.                        |
 | HSB_TZ                   |          | `Etc/UTC`   | The timezone to use for scheduling                                                        |
 | TZ                       |          | `Etc/UTC`   | The timezone to use for the container                                                     |
+
+#### Including or excluding specific files
+
+To include or exclude specific files or directories from a backup, use ONE of the following ENV variables. These are mutually exclusive, do not use more than one.
+
+-   `HSB_EXCLUDE_FILES` - A comma separated list of files or directories to exclude from the backup.
+-   `HSB_EXCLUDE_REGEX` - A regex pattern to exclude files or directories from the backup.
+-   `HSB_INCLUDE_FILES` - A comma separated list of specific files or directories to backup.
+-   `HSB_INCLUDE_REGEX` - A regex pattern to include files or directories in the backup.
 
 ### Scheduler
 

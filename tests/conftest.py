@@ -51,6 +51,27 @@ def backup_dir(tmp_path: Path, mock_config) -> Path:
 
 
 @pytest.fixture()
+def job_data_dir(tmp_path: Path, mock_config) -> Path:
+    """Fixture to create a temporary job data directory with mock data files."""
+    job_data_dir = tmp_path / "job_data"
+    job_data_dir.mkdir()
+
+    with Config.change_config_sources(mock_config(job_data_dir=job_data_dir)):
+        # Create mock data files
+        for i in range(5):
+            data_file = job_data_dir / f"file_{i}.txt"
+            data_file.touch()
+
+        subdir = job_data_dir / "subdir"
+        subdir.mkdir()
+        for i in range(5):
+            data_file = subdir / f"subfile_{i}.txt"
+            data_file.touch()
+
+        return job_data_dir
+
+
+@pytest.fixture()
 def debug():
     """Print debug information to the console. This is used to debug tests while writing them."""
 

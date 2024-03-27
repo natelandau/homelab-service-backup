@@ -1,5 +1,6 @@
 """Helper utilities for service_backup."""
 
+import re
 import shutil
 from pathlib import Path
 
@@ -13,6 +14,48 @@ from homelab_service_backup.constants import BACKUP_EXT
 from .config import Config
 
 p = inflect.engine()
+
+
+def filter_file_for_backup(file: Path) -> bool:
+    """Determine whether a file should be backed up based on inclusion and exclusion criteria.
+
+    This function decides if a given file should be included in a backup operation. It evaluates
+    the file against a set of inclusion and exclusion rules defined in the application's configuration.
+    A file must meet any specified inclusion criteria and not meet any of the exclusion criteria to be
+    eligible for backup. The rules can be specified as exact file paths or regular expressions.
+
+    Args:
+        file (Path): The file path to evaluate for backup eligibility.
+
+    Returns:
+        bool: True if the file should be backed up, based on the evaluation of inclusion and
+              exclusion rules. False otherwise.
+    """
+    config = Config()
+    include_files = config.include_files
+    exclude_files = config.exclude_files
+    include_regex = re.compile(config.include_regex) if config.include_regex else None
+    exclude_regex = re.compile(config.exclude_regex) if config.exclude_regex else None
+
+    test_path = str(file)
+
+    # Skip files that don't match the include rules
+    if include_files and test_path not in include_files:
+        logger.trace(f"Skipping file due to include rules: {file}")
+        return False
+    if include_regex and not include_regex.match(test_path):
+        logger.trace(f"Skipping file due to include regex: {file}")
+        return False
+
+    # Skip files that match the exclude rules
+    if exclude_files and test_path in exclude_files:
+        logger.trace(f"Skipping file due to exclude rules: {file}")
+        return False
+    if exclude_regex and exclude_regex.match(test_path):
+        logger.trace(f"Skipping file due to exclude regex: {file}")
+        return False
+
+    return True
 
 
 def clean_directory(directory: Path) -> None:

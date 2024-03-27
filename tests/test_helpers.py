@@ -11,6 +11,7 @@ from homelab_service_backup.utils.helpers import (
     Config,
     clean_directory,
     clean_old_backups,
+    filter_file_for_backup,
     find_most_recent_backup,
     type_of_backup,
 )
@@ -91,3 +92,24 @@ def test_clean_old_backups(backup_dir: Path, mock_config, debug) -> None:
         "test_job-20210101T010100-monthly.tgz",
         "test_job-20210101T010100-yearly.tgz",
     ]
+
+
+@pytest.mark.parametrize(
+    ("filename", "config", "expected"),
+    [
+        ("foo.txt", {}, True),
+        ("foo.txt", {"include_files": "bar.txt,baz.txt"}, False),
+        ("foo.txt", {"include_files": "foo.txt"}, True),
+        ("foo.txt", {"include_regex": r".*\.md"}, False),
+        ("foo.txt", {"include_regex": r".*\.txt"}, True),
+        ("foo.txt", {"exclude_files": "bar.txt,baz.txt"}, True),
+        ("foo.txt", {"exclude_files": "foo.txt"}, False),
+        ("foo.txt", {"exclude_regex": r".*\.md"}, True),
+        ("foo.txt", {"exclude_regex": r".*\.txt"}, False),
+    ],
+)
+def test_filter_file_for_backup(mock_config, filename: str, config: dict, expected: bool, debug):
+    """Test filter_file_for_backup."""
+    with Config.change_config_sources(mock_config(**config)):
+        # debug("config", Config().model_dump())
+        assert filter_file_for_backup(Path(filename)) == expected

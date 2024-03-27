@@ -6,6 +6,7 @@ from .config import Config
 from .helpers import (
     clean_directory,
     clean_old_backups,
+    filter_file_for_backup,
     find_most_recent_backup,
     get_current_time,
     type_of_backup,
@@ -17,6 +18,7 @@ __all__ = [
     "clean_directory",
     "clean_old_backups",
     "console",
+    "filter_file_for_backup",
     "find_most_recent_backup",
     "get_current_time",
     "instantiate_logger",

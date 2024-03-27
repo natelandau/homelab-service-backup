@@ -14,7 +14,11 @@ class Config(BaseConfig):  # type: ignore [misc]
     action: Literal["backup", "restore"]
     backup_storage_dir: Path
     delete_source: bool = False
+    exclude_files: tuple[str, ...] = ()
+    exclude_regex: str = ""
     host_name: str = "unknown"
+    include_files: tuple[str, ...] = ()
+    include_regex: str = ""
     job_data_dir: Path
     job_name: str
     log_file: str = "homelab_service_backup.log"
@@ -31,8 +35,6 @@ class Config(BaseConfig):  # type: ignore [misc]
     schedule_minute: Optional[str] = None
     schedule_week: Optional[str] = None
     schedule: bool = False
-    specific_files: Optional[tuple[str, ...]] = None
-    exclude_files: Optional[tuple[str, ...]] = None
     tz: str = "Etc/UTC"
 
     CONFIG_SOURCES: ClassVar[ConfigSources | None] = EnvSource(
@@ -41,7 +43,11 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_ACTION",
             "HSB_BACKUP_STORAGE_DIR",
             "HSB_DELETE_SOURCE",
+            "HSB_EXCLUDE_FILES",
+            "HSB_EXCLUDE_REGEX",
             "HSB_HOST_NAME",
+            "HSB_INCLUDE_FILES",
+            "HSB_INCLUDE_REGEX",
             "HSB_JOB_DATA_DIR",
             "HSB_JOB_NAME",
             "HSB_LOG_FILE",
@@ -58,15 +64,17 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_SCHEDULE_MINUTE",
             "HSB_SCHEDULE_WEEK",
             "HSB_SCHEDULE",
-            "HSB_SPECIFIC_FILES",
-            "HSB_EXCLUDE_FILES",
             "HSB_TZ",
         ],
         remap={
             "HSB_ACTION": "action",
             "HSB_BACKUP_STORAGE_DIR": "backup_storage_dir",
             "HSB_DELETE_SOURCE": "delete_source",
+            "HSB_EXCLUDE_FILES": "exclude_files",
+            "HSB_EXCLUDE_REGEX": "exclude_regex",
             "HSB_HOST_NAME": "host_name",
+            "HSB_INCLUDE_FILES": "include_files",
+            "HSB_INCLUDE_REGEX": "include_regex",
             "HSB_JOB_DATA_DIR": "job_data_dir",
             "HSB_JOB_NAME": "job_name",
             "HSB_LOG_FILE": "log_file",
@@ -83,15 +91,15 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_SCHEDULE_MINUTE": "schedule_minute",
             "HSB_SCHEDULE_WEEK": "schedule_week",
             "HSB_SCHEDULE": "schedule",
-            "HSB_SPECIFIC_FILES": "specific_files",
             "HSB_TZ": "tz",
-            "HSB_EXCLUDE_FILES": "exclude_files",
         },
     )
 
-    @validator("specific_files", "exclude_files", pre=True, each_item=False)
+    @validator("include_files", "exclude_files", pre=True, each_item=False)
     def split_string(cls, v: str) -> tuple[str, ...]:
         """Split a string into a tuple of strings."""
+        if not v:
+            return ()
         return tuple(v.split(","))
 
     @validator("backup_storage_dir", "job_data_dir", pre=True)
