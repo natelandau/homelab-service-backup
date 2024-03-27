@@ -25,7 +25,7 @@ def setup_schedule() -> None:
             day_of_week=Config().schedule_day_of_week,
             week=Config().schedule_week,
             day=Config().schedule_day,
-            jitter=120,
+            jitter=600,
             timezone=Config().tz,
         )
         logger.success("Scheduled backup task")
@@ -39,7 +39,7 @@ def setup_schedule() -> None:
             day_of_week=Config().schedule_day_of_week,
             week=Config().schedule_week,
             day=Config().schedule_day,
-            jitter=120,
+            jitter=600,
             timezone=Config().tz,
         )
         logger.success("Scheduled restore task")
