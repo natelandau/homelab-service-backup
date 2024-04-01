@@ -1,3 +1,13 @@
+## v0.4.0 (2024-04-01)
+
+### Feat
+
+- **restore**: optionally chown restored files
+
+### Fix
+
+- **restore**: add 5 second pause
+
 ## v0.3.0 (2024-03-27)
 
 ### Feat
