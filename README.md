@@ -17,6 +17,8 @@ All configuration is managed through environment variables.
 | ------------------------ | -------- | ----------- | ----------------------------------------------------------------------------------------- |
 | HSB_ACTION               | ✅       |             | The action to take. `backup` or `restore`                                                 |
 | HSB_BACKUP_STORAGE_DIR   | ✅       |             | The directory to store backups                                                            |
+| HSB_CHOWN_GID            |          |             | If provided, change the group id that owns all files/dirs                                 |
+| HSB_CHOWN_UID            |          |             | If provided, change the user id that owns all files/dirs                                  |
 | HSB_DELETE_SOURCE        |          | `false`     | Delete all contents in the source directory after backup                                  |
 | HSB_EXCLUDE_FILES        |          |             | A comma separated list of files or directories to exclude from the backup.                |
 | HSB_EXCLUDE_REGEX        |          |             | A regex pattern to exclude files or directories from the backup.                          |
@@ -41,8 +43,6 @@ All configuration is managed through environment variables.
 | HSB_SCHEDULE_WEEK        |          |             | ISO week (1-53)                                                                           |
 | HSB_TZ                   |          | `Etc/UTC`   | The timezone to use for scheduling                                                        |
 | TZ                       |          | `Etc/UTC`   | The timezone to use for the container                                                     |
-| HSB_CHOWN_USER           |          |             | The user to change ownership (provide uid)                                                |
-| HSB_CHOWN_GROUP          |          |             | The group to change ownership (provide gid)                                               |
 
 #### Including or excluding specific files
 

@@ -34,6 +34,9 @@ def chown_all_files(directory: Path | str) -> None:
     uid = int(config.chown_user)
     gid = int(config.chown_group)
     # Find all files using pathlib and chown the owner and group
+
+    os.chown(directory.resolve(), uid, gid)
+
     for file in directory.rglob("*"):
         try:
             os.chown(file.resolve(), uid, gid)

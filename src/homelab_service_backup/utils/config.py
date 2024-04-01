@@ -67,8 +67,8 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_SCHEDULE_WEEK",
             "HSB_SCHEDULE",
             "HSB_TZ",
-            "HSB_CHOWN_USER",
-            "HSB_CHOWN_GROUP",
+            "HSB_CHOWN_UID",
+            "HSB_CHOWN_GID",
         ],
         remap={
             "HSB_ACTION": "action",
@@ -95,8 +95,8 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_SCHEDULE_MINUTE": "schedule_minute",
             "HSB_SCHEDULE_WEEK": "schedule_week",
             "HSB_SCHEDULE": "schedule",
-            "HSB_CHOWN_USER": "chown_user",
-            "HSB_CHOWN_GROUP": "chown_group",
+            "HSB_CHOWN_UID": "chown_user",
+            "HSB_CHOWN_GID": "chown_group",
             "HSB_TZ": "tz",
         },
     )
