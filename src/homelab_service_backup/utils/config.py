@@ -13,6 +13,8 @@ class Config(BaseConfig):  # type: ignore [misc]
     # Default values
     action: Literal["backup", "restore"]
     backup_storage_dir: Path
+    chown_group: Optional[str] = None
+    chown_user: Optional[str] = None
     delete_source: bool = False
     exclude_files: tuple[str, ...] = ()
     exclude_regex: str = ""
@@ -65,6 +67,8 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_SCHEDULE_WEEK",
             "HSB_SCHEDULE",
             "HSB_TZ",
+            "HSB_CHOWN_USER",
+            "HSB_CHOWN_GROUP",
         ],
         remap={
             "HSB_ACTION": "action",
@@ -91,6 +95,8 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_SCHEDULE_MINUTE": "schedule_minute",
             "HSB_SCHEDULE_WEEK": "schedule_week",
             "HSB_SCHEDULE": "schedule",
+            "HSB_CHOWN_USER": "chown_user",
+            "HSB_CHOWN_GROUP": "chown_group",
             "HSB_TZ": "tz",
         },
     )

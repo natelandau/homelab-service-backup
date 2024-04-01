@@ -1,5 +1,6 @@
 """Helper utilities for service_backup."""
 
+import os
 import re
 import shutil
 from pathlib import Path
@@ -14,6 +15,32 @@ from homelab_service_backup.constants import BACKUP_EXT
 from .config import Config
 
 p = inflect.engine()
+
+
+def chown_all_files(directory: Path | str) -> None:
+    """Recursively change the ownership of all files in a directory.
+
+    Args:
+        directory (Path | str): The directory to recursively change the ownership of.
+    """
+    if isinstance(directory, str):
+        directory = Path(directory)
+
+    config = Config()
+    if not config.chown_user or not config.chown_group:
+        logger.debug("No chown_user or chown_group specified in config")
+        return
+
+    uid = int(config.chown_user)
+    gid = int(config.chown_group)
+    # Find all files using pathlib and chown the owner and group
+    for file in directory.rglob("*"):
+        try:
+            os.chown(file.resolve(), uid, gid)
+        except OSError as e:
+            logger.error(f"Failed to chown {file}: {e}")
+
+    logger.info(f"Changed ownership of all files in {directory} to {uid}:{gid}")
 
 
 def filter_file_for_backup(file: Path) -> bool:

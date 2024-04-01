@@ -41,6 +41,8 @@ All configuration is managed through environment variables.
 | HSB_SCHEDULE_WEEK        |          |             | ISO week (1-53)                                                                           |
 | HSB_TZ                   |          | `Etc/UTC`   | The timezone to use for scheduling                                                        |
 | TZ                       |          | `Etc/UTC`   | The timezone to use for the container                                                     |
+| HSB_CHOWN_USER           |          |             | The user to change ownership (provide uid)                                                |
+| HSB_CHOWN_GROUP          |          |             | The group to change ownership (provide gid)                                               |
 
 #### Including or excluding specific files
 

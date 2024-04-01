@@ -5,7 +5,12 @@ import time
 
 from loguru import logger
 
-from homelab_service_backup.utils import Config, clean_directory, find_most_recent_backup
+from homelab_service_backup.utils import (
+    Config,
+    chown_all_files,
+    clean_directory,
+    find_most_recent_backup,
+)
 
 
 def do_restore() -> bool:
@@ -31,6 +36,8 @@ def do_restore() -> bool:
         return False
 
     time.sleep(5)
+    chown_all_files(destination)
+
     logger.success(f"Data restored from {most_recent_backup.name}")
 
     return True
