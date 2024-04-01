@@ -1,3 +1,9 @@
+## v0.4.1 (2024-04-01)
+
+### Fix
+
+- **restore**: chown root restore directory
+
 ## v0.4.0 (2024-04-01)
 
 ### Feat
