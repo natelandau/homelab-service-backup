@@ -1,6 +1,7 @@
 """Restore service data."""
 
 import tarfile
+import time
 
 from loguru import logger
 
@@ -29,5 +30,7 @@ def do_restore() -> bool:
         logger.error(f"Failed to restore backup: {e}")
         return False
 
+    time.sleep(5)
     logger.success(f"Data restored from {most_recent_backup.name}")
+
     return True
