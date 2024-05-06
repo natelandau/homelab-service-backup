@@ -2,6 +2,7 @@
 scratch/
 tmp*
 todo.txt
+service-backup.log
 
 # Caches
 *_cache/
