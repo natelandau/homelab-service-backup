@@ -21,7 +21,7 @@
         apscheduler = "^3.10.4"
         arrow       = "^1.3.0"
         confz       = "^2.0.1"
-        inflect     = "^7.2.1"
+        inflect     = "^7.3.0"
         loguru      = "^0.7.2"
         python      = "^3.11"
         rich        = "^13.7.1"
