@@ -55,7 +55,7 @@ def do_backup_postgres() -> Path | None:
         )
     except ErrorReturnCode as e:
         if backup_file.exists():
-            logger.trace("Removing incomplete backup file")
+            logger.debug("Removing incomplete backup file")
             backup_file.unlink()
         msg = e.stderr.decode("utf-8").strip()
         logger.error(msg)

@@ -79,3 +79,6 @@ def setup_schedule() -> None:
 
     # Start the scheduler
     scheduler.start()
+
+    if config.log_level in {"TRACE", "DEBUG"}:
+        scheduler.print_jobs()

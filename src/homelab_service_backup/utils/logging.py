@@ -63,14 +63,7 @@ def instantiate_logger() -> None:  # pragma: no cover
             enqueue=True,
         )
 
-    if Config().log_level.upper() == "TRACE":
-        logging.getLogger("apscheduler").setLevel(level="DEBUG")
-
-    if Config().log_level.upper() not in {"TRACE", "DEBUG"}:
-        # Intercept standard package logs and redirect to Loguru
-        logging.getLogger("peewee").setLevel(level="DEBUG")
-        logging.getLogger("apscheduler").setLevel(level="ERROR")
-        logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
+    logging.basicConfig(handlers=[InterceptHandler()], level=0, force=True)
 
 
 class InterceptHandler(logging.Handler):  # pragma: no cover
