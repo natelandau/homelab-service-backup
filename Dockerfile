@@ -2,7 +2,7 @@
 FROM python:3.11
 
 # Install Apt Packages
-RUN apt-get update && apt-get install -y tar tzdata
+RUN apt-get update && apt-get install -y tar tzdata postgresql-client
 
 # Set timezone
 ENV TZ=Etc/UTC

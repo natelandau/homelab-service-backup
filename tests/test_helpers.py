@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from freezegun import freeze_time
 
-from homelab_service_backup.constants import BACKUP_EXT
+from homelab_service_backup.constants import FILESYSTEM_BACKUP_EXT
 from homelab_service_backup.utils.helpers import (
     Config,
     clean_directory,
@@ -48,7 +48,7 @@ def test_find_most_recent_backup(mock_config, backup_dir: Path, debug):
 
         # THEN: The function should return the path to the most recently modified backup file
         expected_backup_file = (
-            backup_dir / f"{Config().job_name}-20220202T020200-yearly.{BACKUP_EXT}"
+            backup_dir / f"{Config().job_name}-20220202T020200-yearly.{FILESYSTEM_BACKUP_EXT}"
         )
 
         assert (
