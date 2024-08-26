@@ -10,11 +10,35 @@ import inflect
 from arrow import Arrow
 from loguru import logger
 
-from homelab_service_backup.constants import BACKUP_EXT
+from homelab_service_backup.constants import FILESYSTEM_BACKUP_EXT, POSTGRES_BACKUP_EXT
 
 from .config import Config
 
 p = inflect.engine()
+
+
+def get_job_name() -> str:
+    """Retrieve the name of the current job. If backup type is postgres, append '-postgres' to the job name.
+
+    Returns:
+        str: The name of the current job.
+    """
+    if Config().use_postgres:
+        return f"{Config().job_name}-postgres"
+
+    return Config().job_name
+
+
+def get_backup_file_extension() -> str:
+    """Retrieve the file extension for the current backup type.
+
+    Returns:
+        str: The file extension for the current backup type.
+    """
+    if Config().use_postgres:
+        return POSTGRES_BACKUP_EXT
+
+    return FILESYSTEM_BACKUP_EXT
 
 
 def chown_all_files(directory: Path | str) -> None:
@@ -94,6 +118,10 @@ def clean_directory(directory: Path) -> None:
     Args:
         directory (Path): The directory to clean up.
     """
+    if not directory.is_dir():
+        logger.warning(f"{directory} is not a directory. Can not clean up.")
+        return
+
     n = 0
     for child in directory.iterdir():
         n += 1
@@ -130,9 +158,9 @@ def clean_old_backups() -> list[Path]:
 
     # Build the dictionary of backups
     backup_dir = Config().backup_storage_dir
-    job_name = Config().job_name
+    job_name = get_job_name()
     for file in sorted(
-        backup_dir.glob(f"{job_name}-*.{BACKUP_EXT}"),
+        backup_dir.glob(f"{job_name}-*.{get_backup_file_extension()}"),
         key=lambda x: x.stat().st_mtime,
         reverse=True,
     ):
@@ -168,10 +196,11 @@ def get_current_time() -> Arrow:
 
 def find_most_recent_backup() -> Path | None:
     """Finds the most recent backup for a specific job."""
-    job_name = Config().job_name
+    job_name = get_job_name()
     backup_dir = Config().backup_storage_dir
     backup_files = sorted(
-        backup_dir.glob(f"{job_name}-*.{BACKUP_EXT}"), key=lambda x: x.stat().st_mtime
+        backup_dir.glob(f"{job_name}-*.{get_backup_file_extension()}"),
+        key=lambda x: x.stat().st_mtime,
     )
 
     return backup_files[-1] if backup_files else None

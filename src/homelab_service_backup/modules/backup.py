@@ -1,10 +1,13 @@
 """Backup service data."""
 
+import os
 import tarfile
 from pathlib import Path
 
 import inflect
+import typer
 from loguru import logger
+from sh import ErrorReturnCode, pg_dump
 
 from homelab_service_backup.constants import ALWAYS_ECLUDE_FILENAMES
 from homelab_service_backup.utils import (
@@ -12,21 +15,78 @@ from homelab_service_backup.utils import (
     clean_directory,
     clean_old_backups,
     filter_file_for_backup,
+    get_backup_file_extension,
     get_current_time,
+    get_job_name,
     type_of_backup,
 )
 
 p = inflect.engine()
 
 
-def do_backup() -> Path | None:
+def do_backup_postgres() -> Path | None:
+    """Backup a PostgreSQL database."""
+    backup_dir = Config().backup_storage_dir
+    backup_type = type_of_backup()
+    job_name = get_job_name()
+    timestamp = get_current_time().format("YYYYMMDDTHHmmss")
+    backup_filename = f"{job_name}-{timestamp}-{backup_type}.{get_backup_file_extension()}"
+    backup_file = backup_dir / backup_filename
+    logger.trace(f"{backup_file=!s}")
+
+    # Set password in PGPASSWORD environment variable
+    os.environ["PGPASSWORD"] = Config().postgres_password
+
+    try:
+        pg_dump(
+            "-h",
+            Config().postgres_host,
+            "-p",
+            Config().postgres_port,
+            "-U",
+            Config().postgres_user,
+            "-d",
+            Config().postgres_db,
+            "--clean",
+            "--if-exists",
+            "-Z",
+            "9",
+            _out=backup_file,
+        )
+    except ErrorReturnCode as e:
+        if backup_file.exists():
+            logger.trace("Removing incomplete backup file")
+            backup_file.unlink()
+        msg = e.stderr.decode("utf-8").strip()
+        logger.error(msg)
+        raise typer.Exit(code=1) from e
+
+    logger.success(f"Backup created: {backup_file.name}")
+
+    deleted_backups = clean_old_backups()
+    if deleted_backups:
+        logger.info(
+            f"Delete {len(deleted_backups)} old {p.plural_noun('backup', len(deleted_backups))}"
+        )
+
+    if Config().delete_source and Config().job_data_dir != Path("/nonexistent"):
+        clean_directory(Config().job_data_dir)
+
+    return backup_file
+
+
+def do_backup_filesystem() -> Path | None:
     """Backup service data."""
+    if Config().job_data_dir == Path("/nonexistent"):
+        logger.error("No job data directory specified")
+        raise typer.Exit(code=1)
+
     source_dir = Config().job_data_dir
     backup_dir = Config().backup_storage_dir
     backup_type = type_of_backup()
-    job_name = Config().job_name
+    job_name = get_job_name()
     timestamp = get_current_time().format("YYYYMMDDTHHmmss")
-    backup_filename = f"{job_name}-{timestamp}-{backup_type}.tgz"
+    backup_filename = f"{job_name}-{timestamp}-{backup_type}.{get_backup_file_extension()}"
     backup_file = backup_dir / backup_filename
     logger.trace(f"{backup_file=!s}")
 

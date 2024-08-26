@@ -7,11 +7,11 @@ from pathlib import Path
 import pytest
 from confz import DataSource, FileSource
 
-from homelab_service_backup.constants import BACKUP_EXT
+from homelab_service_backup.constants import FILESYSTEM_BACKUP_EXT
 from homelab_service_backup.utils import Config, console
 
 
-@pytest.fixture()
+@pytest.fixture
 def backup_dir(tmp_path: Path, mock_config) -> Path:
     """Fixture to create a temporary backup directory with mock backup files, each having different modification times."""
     backup_dir = tmp_path / "backups"
@@ -20,7 +20,7 @@ def backup_dir(tmp_path: Path, mock_config) -> Path:
     with Config.change_config_sources(mock_config(backup_storage_dir=backup_dir)):
         # create daily backups
         # for i in range(8):
-        #     backup_file = backup_dir / f"{Config().job_name}-2024032{i}T000{i}00-daily.{BACKUP_EXT}"
+        #     backup_file = backup_dir / f"{Config().job_name}-2024032{i}T000{i}00-daily.{FILESYSTEM_BACKUP_EXT}"
         #     backup_file.touch()
         #     # Set the file's modification time to a different value for each file
         #     if i == 1:
@@ -33,7 +33,8 @@ def backup_dir(tmp_path: Path, mock_config) -> Path:
             for i in range(2):
                 n = i + 1
                 backup_file = (
-                    backup_dir / f"{Config().job_name}-202{n}0{n}0{n}T0{n}0{n}00-{x}.{BACKUP_EXT}"
+                    backup_dir
+                    / f"{Config().job_name}-202{n}0{n}0{n}T0{n}0{n}00-{x}.{FILESYSTEM_BACKUP_EXT}"
                 )
                 backup_file.touch()
                 if i == 1 and x == "yearly":
@@ -50,7 +51,7 @@ def backup_dir(tmp_path: Path, mock_config) -> Path:
         return backup_dir
 
 
-@pytest.fixture()
+@pytest.fixture
 def job_data_dir(tmp_path: Path, mock_config) -> Path:
     """Fixture to create a temporary job data directory with mock data files."""
     job_data_dir = tmp_path / "job_data"
@@ -71,7 +72,7 @@ def job_data_dir(tmp_path: Path, mock_config) -> Path:
         return job_data_dir
 
 
-@pytest.fixture()
+@pytest.fixture
 def debug():
     """Print debug information to the console. This is used to debug tests while writing them."""
 
@@ -106,7 +107,7 @@ def debug():
     return _debug_inner
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_config():
     """Mock specific configuration data for use in tests by accepting arbitrary keyword arguments.
 

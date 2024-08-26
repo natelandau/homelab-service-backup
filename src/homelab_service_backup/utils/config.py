@@ -21,7 +21,7 @@ class Config(BaseConfig):  # type: ignore [misc]
     host_name: str = "unknown"
     include_files: tuple[str, ...] = ()
     include_regex: str = ""
-    job_data_dir: Path
+    job_data_dir: Path = Path("/nonexistent")
     job_name: str
     log_file: str = "homelab_service_backup.log"
     log_level: str = "INFO"  # TRACE, DEBUG, INFO, WARNING, ERROR, CRITICAL
@@ -38,6 +38,12 @@ class Config(BaseConfig):  # type: ignore [misc]
     schedule_week: Optional[str] = None
     schedule: bool = False
     tz: str = "Etc/UTC"
+    postgres_host: str = "localhost"
+    postgres_port: int = 5432
+    postgres_user: str = ""
+    postgres_password: str = ""
+    postgres_db: str = ""
+    use_postgres: bool = False
 
     CONFIG_SOURCES: ClassVar[ConfigSources | None] = EnvSource(
         file=".env",  # Default file to read from
@@ -69,6 +75,12 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_TZ",
             "HSB_CHOWN_UID",
             "HSB_CHOWN_GID",
+            "HSB_POSTGRES_HOST",
+            "HSB_POSTGRES_PORT",
+            "HSB_POSTGRES_USER",
+            "HSB_POSTGRES_PASSWORD",
+            "HSB_POSTGRES_DB",
+            "HSB_USE_POSTGRES",
         ],
         remap={
             "HSB_ACTION": "action",
@@ -98,6 +110,12 @@ class Config(BaseConfig):  # type: ignore [misc]
             "HSB_CHOWN_UID": "chown_user",
             "HSB_CHOWN_GID": "chown_group",
             "HSB_TZ": "tz",
+            "HSB_POSTGRES_HOST": "postgres_host",
+            "HSB_POSTGRES_PORT": "postgres_port",
+            "HSB_POSTGRES_USER": "postgres_user",
+            "HSB_POSTGRES_PASSWORD": "postgres_password",
+            "HSB_POSTGRES_DB": "postgres_db",
+            "HSB_USE_POSTGRES": "use_postgres",
         },
     )
 

@@ -1,11 +1,14 @@
 # homelab-service-backup
 
-A Docker container to backup and restore data from services running in a homelab cluster orchestrated by Hashicorp Nomad. This container is designed to be run as a pre-start, post-star, and post-stop task along inside a Nomad job.
+A Docker container to backup and restore data from services running in a homelab cluster orchestrated by Hashicorp Nomad. This container is designed to be run as a pre-start, post-star, and post-stop task alongside a Nomad job.
 
 ## Features
 
--   Backups are tar.gz compressed
+-   Backup and restore files and directories
+-   Backup and restore Postgres databases
+-   Filesystem backups are tar.gz compressed
 -   Configurable retention policies
+-   Customizable file inclusion and exclusion rules using regex
 -   Dockerized for easy deployment
 -   Scheduled backups
 
@@ -13,36 +16,42 @@ A Docker container to backup and restore data from services running in a homelab
 
 All configuration is managed through environment variables.
 
-| Variable Name            | Required | Default     | Description                                                                               |
-| ------------------------ | -------- | ----------- | ----------------------------------------------------------------------------------------- |
-| HSB_ACTION               | ✅       |             | The action to take. `backup` or `restore`                                                 |
-| HSB_BACKUP_STORAGE_DIR   | ✅       |             | The directory to store backups                                                            |
-| HSB_CHOWN_GID            |          |             | If provided, change the group id that owns all files/dirs                                 |
-| HSB_CHOWN_UID            |          |             | If provided, change the user id that owns all files/dirs                                  |
-| HSB_DELETE_SOURCE        |          | `false`     | Delete all contents in the source directory after backup                                  |
-| HSB_EXCLUDE_FILES        |          |             | A comma separated list of files or directories to exclude from the backup.                |
-| HSB_EXCLUDE_REGEX        |          |             | A regex pattern to exclude files or directories from the backup.                          |
-| HSB_HOST_NAME            |          | `localhost` | The hostname of the machine running the backup. Used in logs                              |
-| HSB_INCLUDE_FILES        |          |             | A comma separated list of specific files or directories to backup.                        |
-| HSB_INCLUDE_REGEX        |          |             | A regex pattern to include files or directories in the backup.                            |
-| HSB_JOB_DATA_DIR         | ✅       |             | The directory to backup                                                                   |
-| HSB_JOB_NAME             | ✅       |             | The name of the Nomad job                                                                 |
-| HSB_LOG_FILE             |          |             | The file to write logs to                                                                 |
-| HSB_LOG_LEVEL            |          | `INFO`      | The log level for the application<br>`TRACE`, `DEBUG`, `INFO`, `SUCCESS`, `WARN`, `ERROR` |
-| HSB_LOG_TO_FILE          |          | `false`     | Write logs to a file                                                                      |
-| HSB_RETENTION_DAILY      |          | 6           | The number of daily backups to keep                                                       |
-| HSB_RETENTION_HOURLY     |          | 2           | The number of hourly backups to keep                                                      |
-| HSB_RETENTION_MONTHLY    |          | 11          | The number of monthly backups to keep                                                     |
-| HSB_RETENTION_WEEKLY     |          | 3           | The number of weekly backups to keep                                                      |
-| HSB_RETENTION_YEARLY     |          | 2           | The number of yearly backups to keep                                                      |
-| HSB_SCHEDULE             |          | `false`     | Run when scheduled                                                                        |
-| HSB_SCHEDULE_DAY         |          |             | Day of month<br>`3rd fri`, `1,21`, `last fr`                                              |
-| HSB_SCHEDULE_DAY_OF_WEEK |          |             | Number or name of weekday (Monday is 1)<br>`mon,fri`, `1-3`                               |
-| HSB_SCHEDULE_HOUR        |          |             | Hour<br>`*/2`, `1,10,16,23`                                                               |
-| HSB_SCHEDULE_MINUTE      |          |             | Minute<br>`*/12`, `1,10,16,23,45`                                                         |
-| HSB_SCHEDULE_WEEK        |          |             | ISO week (1-53)                                                                           |
-| HSB_TZ                   |          | `Etc/UTC`   | The timezone to use for scheduling                                                        |
-| TZ                       |          | `Etc/UTC`   | The timezone to use for the container                                                     |
+| Variable Name | Required | Default | Description |
+| --- | --- | --- | --- |
+| HSB_ACTION | ✅ |  | The action to take. `backup` or `restore` |
+| HSB_BACKUP_STORAGE_DIR | ✅ |  | The directory to store backups |
+| HSB_CHOWN_GID |  |  | If provided, change the group id that owns all files/dirs |
+| HSB_CHOWN_UID |  |  | If provided, change the user id that owns all files/dirs |
+| HSB_DELETE_SOURCE |  | `false` | Delete all contents in the source directory after backup |
+| HSB_EXCLUDE_FILES |  |  | A comma separated list of files or directories to exclude from the backup. |
+| HSB_EXCLUDE_REGEX |  |  | A regex pattern to exclude files or directories from the backup. |
+| HSB_HOST_NAME |  | `localhost` | The hostname of the machine running the backup. Used in logs |
+| HSB_INCLUDE_FILES |  |  | A comma separated list of specific files or directories to backup. |
+| HSB_INCLUDE_REGEX |  |  | A regex pattern to include files or directories in the backup. |
+| HSB_JOB_DATA_DIR |  |  | The directory to backup required for filesystem (not postgres) backups |
+| HSB_JOB_NAME | ✅ |  | The name of the Nomad job |
+| HSB_LOG_FILE |  |  | The file to write logs to |
+| HSB_LOG_LEVEL |  | `INFO` | The log level for the application<br>`TRACE`, `DEBUG`, `INFO`, `SUCCESS`, `WARN`, `ERROR` |
+| HSB_LOG_TO_FILE |  | `false` | Write logs to a file |
+| HSB_RETENTION_DAILY |  | 6 | The number of daily backups to keep |
+| HSB_RETENTION_HOURLY |  | 2 | The number of hourly backups to keep |
+| HSB_RETENTION_MONTHLY |  | 11 | The number of monthly backups to keep |
+| HSB_RETENTION_WEEKLY |  | 3 | The number of weekly backups to keep |
+| HSB_RETENTION_YEARLY |  | 2 | The number of yearly backups to keep |
+| HSB_SCHEDULE |  | `false` | Run when scheduled |
+| HSB_SCHEDULE_DAY |  |  | Day of month<br>`3rd fri`, `1,21`, `last fr` |
+| HSB_SCHEDULE_DAY_OF_WEEK |  |  | Number or name of weekday (Monday is 1)<br>`mon,fri`, `1-3` |
+| HSB_SCHEDULE_HOUR |  |  | Hour<br>`*/2`, `1,10,16,23` |
+| HSB_SCHEDULE_MINUTE |  |  | Minute<br>`*/12`, `1,10,16,23,45` |
+| HSB_SCHEDULE_WEEK |  |  | ISO week (1-53) |
+| HSB_TZ |  | `Etc/UTC` | The timezone to use for scheduling |
+| TZ |  | `Etc/UTC` | The timezone to use for the container |
+| HSB_USE_POSTGRES |  | `false` | Use Postgres for backups and restore. Uses `pg_dump` to backup the database and `psql` to restore. **IMPORTANT**: Restore will drop tables before restoring, this can result in data loss. |
+| HSB_POSTGRES_HOST |  | `localhost` | The Postgres host |
+| HSB_POSTGRES_PORT |  | `5432` | The Postgres port |
+| HSB_POSTGRES_USER |  |  | The Postgres user |
+| HSB_POSTGRES_PASSWORD |  |  | The Postgres password |
+| HSB_POSTGRES_DB |  |  | The Postgres database |
 
 #### Including or excluding specific files
 
@@ -192,11 +201,7 @@ job "test_job" {
 
 ## Contributing
 
-## Setup: Once per project
-
-There are two ways to contribute to this project.
-
-### 1. Local development
+### Setup: Once per project
 
 1. Install Python 3.11 and [Poetry](https://python-poetry.org)
 2. Clone this repository. `git clone https://github.com/natelandau/backup-mongodb`
@@ -204,7 +209,7 @@ There are two ways to contribute to this project.
 4. Activate your Poetry environment with `poetry shell`.
 5. Install the pre-commit hooks with `pre-commit install --install-hooks`.
 
-## Developing
+### Developing
 
 -   This project follows the [Conventional Commits](https://www.conventionalcommits.org/) standard to automate [Semantic Versioning](https://semver.org/) and [Keep A Changelog](https://keepachangelog.com/) with [Commitizen](https://github.com/commitizen-tools/commitizen).
     -   When you're ready to commit changes run `cz c`
@@ -214,7 +219,3 @@ There are two ways to contribute to this project.
 -   Run `poetry add {package}` from within the development environment to install a run time dependency and add it to `pyproject.toml` and `poetry.lock`.
 -   Run `poetry remove {package}` from within the development environment to uninstall a run time dependency and remove it from `pyproject.toml` and `poetry.lock`.
 -   Run `poetry update` from within the development environment to upgrade all dependencies to the latest versions allowed by `pyproject.toml`.
-
-```
-
-```
