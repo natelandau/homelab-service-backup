@@ -1,3 +1,9 @@
+## v0.5.1 (2024-08-26)
+
+### Fix
+
+- **scheduler**: improve logging
+
 ## v0.5.0 (2024-08-26)
 
 ### Feat
