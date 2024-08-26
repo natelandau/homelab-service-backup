@@ -15,62 +15,67 @@ p = inflect.engine()
 def setup_schedule() -> None:
     """Setup the scheduler for the backup or restore task."""
     scheduler = BackgroundScheduler()
+    config = Config()
 
-    if Config().action == "backup" and not Config().use_postgres:
+    if config.action == "backup" and not config.use_postgres:
         scheduler.add_job(
             do_backup_filesystem,
             "cron",
-            minute=Config().schedule_minute,
-            hour=Config().schedule_hour,
-            day_of_week=Config().schedule_day_of_week,
-            week=Config().schedule_week,
-            day=Config().schedule_day,
+            minute=config.schedule_minute,
+            hour=config.schedule_hour,
+            day_of_week=config.schedule_day_of_week,
+            week=config.schedule_week,
+            day=config.schedule_day,
             jitter=600,
-            timezone=Config().tz,
+            timezone=config.tz,
         )
         logger.success("Scheduled filesystem backup task")
 
-    if Config().action == "backup" and Config().use_postgres:
+    if config.action == "backup" and config.use_postgres:
         scheduler.add_job(
             do_backup_postgres,
             "cron",
-            minute=Config().schedule_minute,
-            hour=Config().schedule_hour,
-            day_of_week=Config().schedule_day_of_week,
-            week=Config().schedule_week,
-            day=Config().schedule_day,
+            minute=config.schedule_minute,
+            hour=config.schedule_hour,
+            day_of_week=config.schedule_day_of_week,
+            week=config.schedule_week,
+            day=config.schedule_day,
             jitter=600,
-            timezone=Config().tz,
+            timezone=config.tz,
         )
         logger.success("Scheduled postgres backup task")
 
-    if Config().action == "restore" and not Config().use_postgres:
+    if config.action == "restore" and not config.use_postgres:
         scheduler.add_job(
             do_restore_filesystem,
             "cron",
-            minute=Config().schedule_minute,
-            hour=Config().schedule_hour,
-            day_of_week=Config().schedule_day_of_week,
-            week=Config().schedule_week,
-            day=Config().schedule_day,
+            minute=config.schedule_minute,
+            hour=config.schedule_hour,
+            day_of_week=config.schedule_day_of_week,
+            week=config.schedule_week,
+            day=config.schedule_day,
             jitter=600,
-            timezone=Config().tz,
+            timezone=config.tz,
         )
         logger.success("Scheduled filesystem restore task")
 
-    if Config().action == "restore" and Config().use_postgres:
+    if config.action == "restore" and config.use_postgres:
         scheduler.add_job(
             do_restore_postgres,
             "cron",
-            minute=Config().schedule_minute,
-            hour=Config().schedule_hour,
-            day_of_week=Config().schedule_day_of_week,
-            week=Config().schedule_week,
-            day=Config().schedule_day,
+            minute=config.schedule_minute,
+            hour=config.schedule_hour,
+            day_of_week=config.schedule_day_of_week,
+            week=config.schedule_week,
+            day=config.schedule_day,
             jitter=600,
-            timezone=Config().tz,
+            timezone=config.tz,
         )
         logger.success("Scheduled postgres restore task")
+
+    logger.info(
+        f"Schedule: minute: {config.schedule_minute}, hour: {config.schedule_hour}, day_of_week: {config.schedule_day_of_week}, week: {config.schedule_week}, day: {config.schedule_day}"
+    )
 
     # Start the scheduler
     scheduler.start()
