@@ -1,3 +1,9 @@
+## v0.5.0 (2024-08-26)
+
+### Feat
+
+- support backup/restore from postrgres dbs (#6)
+
 ## v0.4.1 (2024-04-01)
 
 ### Fix
