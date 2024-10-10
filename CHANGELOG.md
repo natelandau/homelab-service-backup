@@ -1,3 +1,9 @@
+## v0.5.2 (2024-10-10)
+
+### Fix
+
+- improve logging of scheduler
+
 ## v0.5.1 (2024-08-26)
 
 ### Fix

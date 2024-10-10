@@ -1,7 +1,7 @@
 ---
 # https://pre-commit.com
 default_install_hook_types: [commit-msg, pre-commit]
-default_stages: [commit, manual]
+default_stages: [pre-commit, manual]
 fail_fast: true
 repos:
   - repo: "https://github.com/commitizen-tools/commitizen"
@@ -10,7 +10,7 @@ repos:
       - id: commitizen
       - id: commitizen-branch
         stages:
-          - push
+          - pre-push
 
   - repo: "https://github.com/pre-commit/pygrep-hooks"
     rev: v1.10.0

@@ -15,7 +15,7 @@
     name = "homelab-service-backup"
     readme = "README.md"
     requires-python = ">=3.11"
-    version = "0.5.1"
+    version = "0.5.2"
     [project.scripts]
         homelab-service-backup = "homelab_service_backup.cli:app"
         hsb                    = "homelab_service_backup.cli:app"
