@@ -8,6 +8,9 @@ LABEL org.opencontainers.image.licenses=MIT
 LABEL org.opencontainers.image.url=https://github.com/natelandau/homelab-service-backup
 LABEL org.opencontainers.image.title="Homelab Service Backup"
 
+# Install the project into `/app`
+WORKDIR /app
+
 # Install Apt Packages
 RUN apt-get update && apt-get install -y tar tzdata postgresql-client
 
