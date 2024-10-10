@@ -26,6 +26,8 @@ p = inflect.engine()
 
 def do_backup_postgres() -> Path | None:
     """Backup a PostgreSQL database."""
+    logger.debug("Begin backup PostgreSQL database")
+
     backup_dir = Config().backup_storage_dir
     backup_type = type_of_backup()
     job_name = get_job_name()
@@ -80,6 +82,8 @@ def do_backup_filesystem() -> Path | None:
     if Config().job_data_dir == Path("/nonexistent"):
         logger.error("No job data directory specified")
         raise typer.Exit(code=1)
+
+    logger.debug(f"Begin backup source directory: {Config().job_data_dir}")
 
     source_dir = Config().job_data_dir
     backup_dir = Config().backup_storage_dir
