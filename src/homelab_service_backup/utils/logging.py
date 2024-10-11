@@ -24,7 +24,7 @@ def cli_log_formatter(record: dict) -> str:
     name = record["level"].name
     lvl_color = color_map.get(name, "bold")
 
-    return f"[{lvl_color}]{{level: <8}} | {{message}}[/{lvl_color}]"
+    return f"{{time:YYYY-MM-DD HH:mm}} | [{lvl_color}]{{level: <8}} | {{message}}[/{lvl_color}]"
 
 
 def log_file_formatter(record: dict) -> str:

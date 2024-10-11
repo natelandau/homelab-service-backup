@@ -219,3 +219,13 @@ job "test_job" {
 -   Run `poetry add {package}` from within the development environment to install a run time dependency and add it to `pyproject.toml` and `poetry.lock`.
 -   Run `poetry remove {package}` from within the development environment to uninstall a run time dependency and remove it from `pyproject.toml` and `poetry.lock`.
 -   Run `poetry update` from within the development environment to upgrade all dependencies to the latest versions allowed by `pyproject.toml`.
+
+#### Testing Docker Image
+
+```bash
+# Build the image
+docker build -t homelab-service-backup .
+
+# Run the image with environment variables from .env
+docker run --env-file=".env" homelab-service-backup
+```
