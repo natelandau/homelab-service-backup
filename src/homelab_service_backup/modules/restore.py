@@ -75,9 +75,8 @@ def do_restore_filesystem() -> bool:
     destination = f"{Config().job_data_dir}"
 
     try:
-        archive = tarfile.open(most_recent_backup)
-        archive.extractall(path=destination, filter="data")
-        archive.close()
+        with tarfile.open(most_recent_backup) as archive:
+            archive.extractall(path=destination, filter="data")
     except tarfile.TarError as e:
         logger.error(f"Failed to restore backup: {e}")
         return False

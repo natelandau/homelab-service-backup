@@ -164,13 +164,13 @@ def clean_old_backups() -> list[Path]:
         key=lambda x: x.stat().st_mtime,
         reverse=True,
     ):
-        for backup_type in backups:
+        for backup_type in backups:  # noqa: PLC0206
             if file.name and backup_type in file.name:
                 backups[backup_type].append(file)
 
     # # Now delete the old backups
     deleted_files = []
-    for backup_type in backups:
+    for backup_type in backups:  # noqa: PLC0206
         policy = getattr(Config(), f"retention_{backup_type}", 2)
         if len(backups[backup_type]) > policy:
             for backup in backups[backup_type][policy:]:

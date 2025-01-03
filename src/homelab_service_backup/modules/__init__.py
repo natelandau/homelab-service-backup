@@ -5,9 +5,9 @@ from .restore import do_restore_filesystem, do_restore_postgres
 from .scheduler import setup_schedule
 
 __all__ = [
-    "do_restore_postgres",
-    "do_backup_postgres",
     "do_backup_filesystem",
+    "do_backup_postgres",
     "do_restore_filesystem",
+    "do_restore_postgres",
     "setup_schedule",
 ]

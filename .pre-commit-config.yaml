@@ -5,7 +5,7 @@ default_stages: [pre-commit, manual]
 fail_fast: true
 repos:
   - repo: "https://github.com/commitizen-tools/commitizen"
-    rev: v3.29.1
+    rev: v4.1.0
     hooks:
       - id: commitizen
       - id: commitizen-branch
@@ -59,16 +59,17 @@ repos:
         entry: yamllint --strict --config-file .yamllint.yml
 
   - repo: "https://github.com/charliermarsh/ruff-pre-commit"
-    rev: "v0.6.9"
+    rev: "v0.8.5"
     hooks:
       - id: ruff
         exclude: tests/
       - id: ruff-format
 
   - repo: "https://github.com/crate-ci/typos"
-    rev: v1.26.0
+    rev: v1.29.3
     hooks:
       - id: typos
+        args: ["--force-exclude"]
 
   - repo: local
     hooks:
@@ -107,3 +108,14 @@ repos:
           poetry\.lock|
           pyproject\.toml
           )
+
+ci:
+  autofix_commit_msg: |
+    fix: auto fixes from pre-commit.com hooks
+
+    for more information, see https://pre-commit.ci
+  autofix_prs: true
+  autoupdate_commit_msg: "build: pre-commit autoupdate"
+  autoupdate_schedule: quarterly
+  skip: [stopwords, pytest, mypy, shellcheck]
+  submodules: false
