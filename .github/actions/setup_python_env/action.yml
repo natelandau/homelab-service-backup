@@ -24,6 +24,12 @@ runs:
         enable-cache: true
         cache-dependency-glob: "uv.lock"
 
+    - name: install apt packages
+      shell: bash
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y tar tzdata postgresql-client
+
     - name: Set up Python ${{ matrix.python-version }}
       shell: bash
       run: uv python install ${{ matrix.python-version }}
@@ -35,14 +41,3 @@ runs:
     - name: Minimize uv cache
       shell: bash
       run: uv cache prune --ci
-
-    - name: Install SQLite
-      shell: bash
-      run: sudo apt install -y sqlite3
-
-    # ----------------------------------------------
-    #    copy config file to runner
-    # ----------------------------------------------
-    - name: Create empty configuration file
-      shell: bash
-      run: mkdir -p /home/runner/.config/halp && cp ./src/halper/default_config.toml /home/runner/.config/halp/config.toml
