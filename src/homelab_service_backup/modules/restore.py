@@ -20,7 +20,16 @@ from homelab_service_backup.utils import (
 
 
 def do_restore_postgres() -> bool:
-    """Restore postgres data."""
+    """Restore a PostgreSQL database from the most recent backup file.
+
+    Find and decompress the most recent backup file, then restore it to the configured PostgreSQL database using psql. The backup must be a gzipped SQL dump created by pg_dump.
+
+    Returns:
+        bool: True if restore succeeds, False if no backups found.
+
+    Raises:
+        typer.Exit: If psql fails to restore the backup
+    """
     most_recent_backup = find_most_recent_backup()
     if not most_recent_backup:
         logger.error(f"No backups found to restore for {get_job_name()}")
@@ -57,7 +66,16 @@ def do_restore_postgres() -> bool:
 
 
 def do_restore_filesystem() -> bool:
-    """Restore service data."""
+    """Extract and restore service data from the most recent backup archive.
+
+    Find the most recent backup archive, clean the destination directory, and extract the archive contents. After extraction, update file ownership permissions.
+
+    Returns:
+        bool: True if restore succeeds, False if no backups found or extraction fails.
+
+    Raises:
+        typer.Exit: If no job data directory is configured
+    """
     if Config().job_data_dir == Path("/nonexistent"):
         logger.error("No job data directory specified")
         raise typer.Exit(code=1)

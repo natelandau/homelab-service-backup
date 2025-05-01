@@ -25,7 +25,16 @@ p = inflect.engine()
 
 
 def do_backup_postgres() -> Path | None:
-    """Backup a PostgreSQL database."""
+    """Create a compressed backup of a PostgreSQL database using pg_dump.
+
+    Dump the configured PostgreSQL database to a timestamped file in the backup directory. Clean up old backups based on retention policy. Optionally delete the source data directory after successful backup.
+
+    Returns:
+        Path | None: Path to the created backup file, or None if backup fails.
+
+    Raises:
+        typer.Exit: If pg_dump fails to create the backup
+    """
     logger.debug("Begin backup PostgreSQL database")
 
     backup_dir = Config().backup_storage_dir
@@ -78,7 +87,16 @@ def do_backup_postgres() -> Path | None:
 
 
 def do_backup_filesystem() -> Path | None:
-    """Backup service data."""
+    """Create a compressed tar archive backup of the service data directory.
+
+    Recursively scan the configured job data directory and create a gzipped tar archive containing all files that pass the include/exclude filters. Files in ALWAYS_EXCLUDE_FILENAMES are always skipped.
+
+    Returns:
+        Path | None: Path to the created backup file, or None if backup creation failed.
+
+    Raises:
+        typer.Exit: If no job data directory is configured
+    """
     if Config().job_data_dir == Path("/nonexistent"):
         logger.error("No job data directory specified")
         raise typer.Exit(code=1)

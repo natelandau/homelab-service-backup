@@ -7,7 +7,7 @@ inputs:
     description: >
       Version range or exact version of a Python version to use, using SemVer's version range syntax.
     required: false
-    default: 3.x
+    default: "3.13"
 
 outputs:
   python-version:
@@ -17,12 +17,6 @@ outputs:
 runs:
   using: composite
   steps:
-    - name: install apt packages
-      shell: bash
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y tar tzdata postgresql-client
-
     - name: Setup uv with cache
       uses: astral-sh/setup-uv@v3
       with:
@@ -41,3 +35,14 @@ runs:
     - name: Minimize uv cache
       shell: bash
       run: uv cache prune --ci
+
+    - name: Install SQLite
+      shell: bash
+      run: sudo apt install -y sqlite3
+
+    # ----------------------------------------------
+    #    copy config file to runner
+    # ----------------------------------------------
+    - name: Create empty configuration file
+      shell: bash
+      run: mkdir -p /home/runner/.config/halp && cp ./src/halper/default_config.toml /home/runner/.config/halp/config.toml

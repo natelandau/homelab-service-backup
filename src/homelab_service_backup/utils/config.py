@@ -1,7 +1,7 @@
 """Instantiate Config class and set default values."""
 
 from pathlib import Path
-from typing import ClassVar, Literal, Optional
+from typing import ClassVar, Literal
 
 from confz import BaseConfig, ConfigSources, EnvSource
 from pydantic import validator
@@ -13,8 +13,8 @@ class Config(BaseConfig):  # type: ignore [misc]
     # Default values
     action: Literal["backup", "restore"]
     backup_storage_dir: Path
-    chown_group: Optional[str] = None
-    chown_user: Optional[str] = None
+    chown_group: str | None = None
+    chown_user: str | None = None
     delete_source: bool = False
     exclude_files: tuple[str, ...] = ()
     exclude_regex: str = ""
@@ -31,11 +31,11 @@ class Config(BaseConfig):  # type: ignore [misc]
     retention_monthly: int = 2
     retention_weekly: int = 3
     retention_yearly: int = 2
-    schedule_day_of_week: Optional[str] = None
-    schedule_day: Optional[str] = None
-    schedule_hour: Optional[str] = None
-    schedule_minute: Optional[str] = None
-    schedule_week: Optional[str] = None
+    schedule_day_of_week: str | None = None
+    schedule_day: str | None = None
+    schedule_hour: str | None = None
+    schedule_minute: str | None = None
+    schedule_week: str | None = None
     schedule: bool = False
     tz: str = "Etc/UTC"
     postgres_host: str = "localhost"
@@ -121,20 +121,34 @@ class Config(BaseConfig):  # type: ignore [misc]
 
     @validator("include_files", "exclude_files", pre=True, each_item=False)
     def split_string(cls, v: str) -> tuple[str, ...]:
-        """Split a string into a tuple of strings."""
+        """Split a comma-separated string into a tuple of individual strings.
+
+        Convert a comma-delimited string into a tuple of substrings by splitting on commas. Used for parsing configuration values that accept multiple items.
+
+        Args:
+            v (str): The comma-separated string to split.
+
+        Returns:
+            tuple[str, ...]: A tuple containing the individual strings after splitting.
+        """
         if not v:
             return ()
         return tuple(v.split(","))
 
     @validator("backup_storage_dir", "job_data_dir", pre=True)
     def validate_path(cls, string: str) -> Path:
-        """Validates a string as a valid path.
+        """Convert a string to a Path object and verify it exists on the filesystem.
+
+        Resolve the string to an absolute path and check that it exists. Useful for validating configuration paths.
 
         Args:
-            string (str): The string to validate.
+            string (str): The path string to validate and convert.
 
         Returns:
-            Path: The validated path.
+            Path: The resolved absolute Path object.
+
+        Raises:
+            ValueError: If the path does not exist on the filesystem.
         """
         path = Path(string).resolve()
         if not path.exists():
