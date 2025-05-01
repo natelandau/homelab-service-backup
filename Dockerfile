@@ -42,5 +42,5 @@ ENV PATH="/app/.venv/bin:$PATH"
 # Reset the entrypoint, don't invoke `uv`
 ENTRYPOINT []
 
-# Run the valentina by default
+# Run hsb by default
 CMD ["uv", "run", "hsb"]

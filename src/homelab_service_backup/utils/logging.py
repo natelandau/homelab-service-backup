@@ -10,7 +10,16 @@ from .console import console
 
 
 def cli_log_formatter(record: dict) -> str:
-    """Use rich to style log messages."""
+    """Format log messages with rich styling for CLI output.
+
+    Apply color styling to log messages based on their level using rich markup syntax. Maps each log level to a specific color and formats the timestamp, level and message with consistent spacing.
+
+    Args:
+        record (dict): The log record containing level, message and other metadata.
+
+    Returns:
+        str: The formatted log message with rich markup for color styling.
+    """
     color_map = {
         "TRACE": "turquoise4",
         "DEBUG": "cyan",
@@ -28,20 +37,25 @@ def cli_log_formatter(record: dict) -> str:
 
 
 def log_file_formatter(record: dict) -> str:
-    """Format log messages for log files."""
+    """Format log messages for writing to log files with consistent structure and metadata.
+
+    Replace rich markup syntax with plain text and combine timestamp, hostname, level and message into a standardized log line format.
+
+    Args:
+        record (dict): The log record containing message, level and other metadata.
+
+    Returns:
+        str: The formatted log line with timestamp, hostname, level and message.
+    """
     message = record["message"].replace("[code]", "'").replace("[/]", "'")
 
     return f"{{time:YYYY-MM-DD HH:mm:ss}} | {Config().host_name: <7} | {{level: <7}} | {Config().job_name}: {message}\n"
 
 
 def instantiate_logger() -> None:  # pragma: no cover
-    """Instantiate the Loguru logger.
+    """Configure and initialize the Loguru logger with console and file outputs.
 
-    Configure the logger with the specified verbosity level, log file path,
-    and whether to log to a file.
-
-    Returns:
-        None
+    Set up console logging with color formatting and optional file logging with rotation. Configure the logger based on settings from Config() including log level, file path, and output destinations. Intercept and redirect standard logging to Loguru.
     """
     logger.remove()
 

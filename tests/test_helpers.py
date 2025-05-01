@@ -51,9 +51,9 @@ def test_find_most_recent_backup(mock_config, backup_dir: Path, debug):
             backup_dir / f"{Config().job_name}-20220202T020200-yearly.{FILESYSTEM_BACKUP_EXT}"
         )
 
-        assert (
-            most_recent_backup == expected_backup_file
-        ), "The function should identify the most recent backup file correctly."
+        assert most_recent_backup == expected_backup_file, (
+            "The function should identify the most recent backup file correctly."
+        )
 
 
 @pytest.mark.parametrize(

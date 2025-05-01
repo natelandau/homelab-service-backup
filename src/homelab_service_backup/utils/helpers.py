@@ -64,7 +64,7 @@ def chown_all_files(directory: Path | str) -> None:
     for file in directory.rglob("*"):
         try:
             os.chown(file.resolve(), uid, gid)
-        except OSError as e:
+        except OSError as e:  # noqa: PERF203
             logger.error(f"Failed to chown {file}: {e}")
 
     logger.info(f"Changed ownership of all files in {directory} to {uid}:{gid}")
@@ -185,8 +185,7 @@ def clean_old_backups() -> list[Path]:
 def get_current_time() -> Arrow:
     """Retrieves the current time, optionally adjusted to a specific timezone.
 
-    Returns the current time as an Arrow object. If a timezone is specified in the application's
-    configuration, adjusts the time to that timezone; otherwise, uses UTC.
+    Return the current time as an Arrow object. If a timezone is specified in the application's configuration, adjusts the time to that timezone; otherwise, uses UTC.
 
     Returns:
         The current time as an Arrow object, possibly adjusted for timezone.
@@ -195,7 +194,13 @@ def get_current_time() -> Arrow:
 
 
 def find_most_recent_backup() -> Path | None:
-    """Finds the most recent backup for a specific job."""
+    """Find and return the most recent backup file for the current job.
+
+    Search the backup directory for files matching the job name pattern and return the newest one based on modification time. The search uses the job name and appropriate file extension for the current backup type.
+
+    Returns:
+        Path | None: Path to the most recent backup file, or None if no backups exist.
+    """
     job_name = get_job_name()
     backup_dir = Config().backup_storage_dir
     backup_files = sorted(
