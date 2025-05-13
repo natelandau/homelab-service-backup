@@ -12,6 +12,7 @@ __pycache__/
 htmlcov/
 reports/
 .cache/
+.development/
 
 # cruft
 *.rej
