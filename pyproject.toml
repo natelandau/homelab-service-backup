@@ -180,7 +180,7 @@
             "PLW1641",
             "S101",
             "SLF001",
-        ], "duties.py" = ["ANN001"] }
+        ], "duties.py" = ["ANN001", "ARG001"] }
         preview = true
         select = ["ALL"]
         unfixable = [
