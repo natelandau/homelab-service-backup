@@ -1,11 +1,13 @@
 """service-backup CLI."""
 
+import datetime
 import time
 
 import inflect
 import typer
 from confz import validate_all_configs
 from loguru import logger
+from nclutils import print_debug
 from pydantic import ValidationError
 
 from homelab_service_backup.modules import (
@@ -29,9 +31,14 @@ p = inflect.engine()
 
 def log_config_trace(config: Config) -> None:
     """Log configuration at TRACE level if enabled."""
-    if config.log_level == "TRACE":
-        for k, v in config.model_dump().items():
-            logger.trace(f"{k}: {v}")
+    if config.log_level in {"TRACE", "DEBUG"}:
+        print_debug(
+            custom=[
+                {"Config": config.model_dump()},
+                {"System Time": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")},  # noqa: DTZ005
+            ],
+            packages=["nclutils", "loguru", "sh", "typer", "rich", "confz", "apscheduler", "arrow"],
+        )
 
 
 @app.command()

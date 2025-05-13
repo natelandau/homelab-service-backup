@@ -29,7 +29,7 @@ All configuration is managed through environment variables.
 | HSB_INCLUDE_FILES |  |  | A comma separated list of specific files or directories to backup. |
 | HSB_INCLUDE_REGEX |  |  | A regex pattern to include files or directories in the backup. |
 | HSB_JOB_DATA_DIR |  |  | The directory to backup required for filesystem (not postgres) backups |
-| HSB_JOB_NAME | ✅ |  | The name of the Nomad job |
+| r | ✅ |  | The name of the job |
 | HSB_LOG_FILE |  |  | The file to write logs to |
 | HSB_LOG_LEVEL |  | `INFO` | The log level for the application<br>`TRACE`, `DEBUG`, `INFO`, `SUCCESS`, `WARN`, `ERROR` |
 | HSB_LOG_TO_FILE |  | `false` | Write logs to a file |

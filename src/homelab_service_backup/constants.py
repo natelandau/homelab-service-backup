@@ -9,3 +9,5 @@ VERSION = "0.0.0"
 FILESYSTEM_BACKUP_EXT = "tgz"
 POSTGRES_BACKUP_EXT = "sql.gz"
 ALWAYS_ECLUDE_FILENAMES = (".DS_Store", "@eaDir", ".Trashes", "__pycache__")
+PROJECT_ROOT_PATH = Path(__file__).parents[2].absolute()
+DEV_DIR = PROJECT_ROOT_PATH / ".development"

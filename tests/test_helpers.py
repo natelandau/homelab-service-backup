@@ -108,7 +108,7 @@ def test_clean_old_backups(backup_dir: Path, mock_config, debug) -> None:
         ("foo.txt", {"exclude_regex": r".*\.txt"}, False),
     ],
 )
-def test_filter_file_for_backup(mock_config, filename: str, config: dict, expected: bool, debug):
+def test_filter_file_for_backup(mock_config, filename: str, config, expected, debug):
     """Test filter_file_for_backup."""
     with Config.change_config_sources(mock_config(**config)):
         # debug("config", Config().model_dump())
